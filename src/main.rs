@@ -3,14 +3,17 @@ use std::{fmt, fs::File, io, path::PathBuf};
 
 mod cli;
 
-const SYMBOLS: &[char] = &[' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'];
-
 fn main() -> Result<(), &'static str> {
     let matches = cli::new().get_matches();
 
     let input_file: &PathBuf = matches.get_one("input").unwrap();
     let x_stretch: f64 = *matches.get_one("x-stretch").unwrap();
     let size: u32 = *matches.get_one("size").unwrap();
+    let symbols = matches
+        .get_one::<String>("charset")
+        .unwrap()
+        .chars()
+        .collect::<Vec<_>>();
 
     let img = image::open(input_file).unwrap();
     let (w, h) = img.dimensions();
@@ -26,9 +29,9 @@ fn main() -> Result<(), &'static str> {
         .map(|(_, _, color)| {
             let sum: u16 = color.0.iter().take(3).map(|&v| v as u16).sum::<u16>();
             let normalized = sum as f64 / (3.0 * 255.0);
-            let idx = (normalized * SYMBOLS.len() as f64).round() as usize;
+            let idx = (normalized * symbols.len() as f64) as usize;
 
-            SYMBOLS[idx]
+            symbols[idx]
         })
         .collect::<Vec<_>>()
         .chunks(w as usize)

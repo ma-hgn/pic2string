@@ -42,4 +42,14 @@ pub fn new() -> Command {
                 .value_parser(value_parser!(f64))
                 .default_value("2.3"),
         )
+        .arg(
+            Arg::new("charset")
+                .short('c')
+                .long("charset")
+                .help("Character set to use in ascending order of pixel value")
+                .action(ArgAction::Set)
+                .value_name("STRING")
+                .value_parser(value_parser!(String))
+                .default_value(" .:-=+*%#@"),
+        )
 }
